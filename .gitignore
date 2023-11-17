@@ -1,0 +1,11 @@
+# Fichiers générés par l'interpréteur Python
+__pycache__/
+
+# Fichier d'environnement local
+.env
+
+# Dossiers spécifiques à l'IDE
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
