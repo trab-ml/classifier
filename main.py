@@ -1,4 +1,5 @@
 from my_module.tree_classifier import TreeClassifier
+from my_module.data_visualizer import seaborn_split, visualize_initial_data
 import numpy as np
 import pandas as pd
 import random
@@ -23,85 +24,98 @@ def load_data(file_path):
 
     return df
 
-def check_data_validity(data):
+def check_data_validity(df):
     """
     Prend l'objet réprésentant la donnée en paramètre, 
     vérifie qu'il n'y a pas de valeurs nulles et supprime 
     les colonnes inutiles.
 
     Args:
-        data (object): la donnée à traiter
+        df (object): la donnée à traiter
 
     Returns:
         void
     """
-    print("\ndf.describe() => \n")
-    data.describe()
+    # print("\ndf.describe() => \n")
+    # print(df.describe())
 
-    print()
+    # print("\ndf.info() => \n")
+    # df.info()
 
-    print("\ndf.info() => \n")
-    data.info()
+    # supprime la colonne 'Id' qui ne sera pas utile ici
+    df = df.drop('Id', axis=1)
 
-    # supprime la colonne 'Id' qui ne sera pas utile
-    data = data.drop('Id', axis=1)
+    # print("\ndf.head(10) => \n")
+    # print(df.head(10))
 
-    # Les 10 premières lignes 
-    print("data.head(10) => \n")
-    data.head(10)
+import random
 
-    print()
-
-def train_test_split(df, test_size):
+def train_test_split(df, test_size, random_state=None):
     """
-    Prend une dataframe en paramètre et le pourcentage (ou le nombre de lignes) de la dataframe à dédier au tester.
+    Prend une dataframe en paramètre, le pourcentage (ou le nombre de lignes) 
+    de la dataframe à dédier au test et retourne respectivement la donnée 
+    à entraîner (train_data) et la donnée à tester (test_data).
 
     Args:
-        df (object): la donnée à séparer
+        df (pandas.DataFrame): la dataframe contenant la donnée à séparer
+        test_size (float): le pourcentage (entre 0 et 1) ou le nombre de lignes à dédier au test
+        random_state (int or None): seed pour la reproductibilité
 
     Returns:
         train_df, test_df: la donnée à entraîner, la donnée à tester 
     """
+    
+    if not 0 <= test_size <= 1:
+        raise ValueError("La taille du test doit être entre 0 et 1")
+
+    if test_size > len(df):
+        raise ValueError("La taille du test ne peut pas être supérieure à la taille de la dataframe")
+
+    if random_state is not None:
+        random.seed(random_state)
 
     if isinstance(test_size, float):
         test_size = round(test_size * len(df))
-        # print(test_size)
 
-    # liste dans la variable indices les indices de la dataframe df
     indices = df.index.tolist() 
     test_indices = random.sample(population=indices, k=test_size)
     
-    test_df = df.loc[test_indices] # Affecte à test_df les indices de la liste test_indices
-    train_df = df.drop(test_indices) # Supprime les indices contenus dans test_df de train_df
+    test_df = df.loc[test_indices]
+    train_df = df.drop(test_indices)
     
     return train_df, test_df
 
+
 def main():
-    # 1. Charge les données
+    # 1. Chargement des données
     df = load_data('data/Iris.csv')
 
-    # 2. Vérifie les données
+    # 2. Vérification des données
     check_data_validity(df)
 
-    # 3. Visualise les données (si nécessaire)
+    # 3. Visualisation des données...
+    # visualize_initial_data(df)
+    # seaborn_split(df)
 
-    random.seed(0) # pour garder les mêmes valeurs le temps de cette instance d'exécution
-    train_df, test_df = train_test_split(df, 0.3)
+    # 5. Préparation et répartition des données en données d'entraînement et données de test
+    train_df, test_df = train_test_split(df, test_size=0.3, random_state=0)
 
-    # 4. Prépare les données
-    X_train = df.drop('species', axis=1)  # Affecte à X toutes les colonnes sauf la cible
-    y_train = df['species']  # Affecte à y la colonne cible
+    # Séparation des caractéristiques et des étiquettes pour l'ensemble d'entraînement
+    X_train, Y_train = train_df.drop('species', axis=1), train_df['species']
 
-    # 5. Les données sont elles pures? classify : best split
+    # Séparation des caractéristiques et des étiquettes pour l'ensemble de test
+    X_test, Y_test = test_df.drop('species', axis=1), test_df['species']
+
+    # 6. Les données sont elles pures? classify : best split
     # if data is pure, classify
     # else if there are potential splits, perform splits
     # calculate entropy, information gain, and determine the best split
 
     # 7. Crée une instance de TreeClassifier
-    tree_classifier = TreeClassifier()
+    # tree_classifier = TreeClassifier()
 
     # 8. Entraîne le modèle
-    tree_classifier.fit(X, y)
+    # tree_classifier.fit(X_train, Y_train)
 
     # 9. Effectue des prédictions sur de nouvelles données
     # test_data = load_data('data/test_data.csv')
