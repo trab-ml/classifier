@@ -1,31 +1,98 @@
 import numpy as np
+import pandas as pd
+
+def calculate_entropy(labels):
+    unique_labels, counts = np.unique(labels, return_counts=True)
+    probabilities = counts / len(labels)
+    entropy = -np.sum(probabilities * np.log2(probabilities))
+    return entropy
+
+def calculate_information_gain(data, feature_name, target_name):
+    # Calcul de l'entropie initiale
+    initial_entropy = calculate_entropy(data[target_name])
+    print(f"Initial Entropy: {initial_entropy}")
+
+    # Calcul de l'entropie après split
+    values = data[feature_name].unique()
+    new_entropy = 0
+    for value in values:
+        subset = data[data[feature_name] == value]
+        weight = len(subset) / len(data)  # Utilisation de len(data) pour la normalisation
+        entropy = calculate_entropy(subset[target_name])
+        # print(f"Subset Entropy ({feature_name} = {value}): {entropy}")
+        new_entropy += weight * entropy
+
+    # Calcul du gain d'information
+    information_gain = initial_entropy - new_entropy
+    return information_gain
+
+def find_best_split(data, target_name):
+    features = [col for col in data.columns if col != target_name]
+    best_feature = None
+    best_gain = -1
+
+    for feature in features:
+        gain = calculate_information_gain(data, feature, target_name)
+        print(f"Feature: {feature}, Gain: {gain}\n")
+        if gain > best_gain:
+            best_gain = gain
+            best_feature = feature
+
+    print(f"Best Feature: {best_feature}, Best Gain: {best_gain}\n")
+
+    return best_feature, best_gain
 
 class TreeClassifier:
     def __init__(self):
-        # Initialisation de l'arbre de décision
-        pass
+        self.tree = None
 
-    def fit(self, X, y):
-        # Entraînement de l'arbre de décision sur les données d'entraînement
-        pass
+    def train(self, data, target_name):
+        # Lorsque toutes les instances ont la même classe, on retourne un noeud feuille
+        if len(np.unique(data[target_name])) == 1:
+            self.tree = {'class': data[target_name].iloc[0]}
+            return
 
-    def predict(self, X):
-        # Prédiction pour de nouvelles données
-        pass
+        best_feature, _ = find_best_split(data, target_name)
 
-    def entropy(self, y):
-        # Calcul de l'entropie
-        pass
+        # Crée un noeud de décision 
+        self.tree = {'feature': best_feature, 'branches': {}}
 
-class Node:
-    def __init__(self):
-        # Initialisation d'un nœud
-        pass
+        # Construction récursive de l'arbre
+        for value in data[best_feature].unique():
+            subset = data[data[best_feature] == value]
+            if not subset.empty:  # Le sous-ensemble est-il vide?
+                subtree_classifier = TreeClassifier()
+                subtree_classifier.train(subset, target_name)
+                self.tree['branches'][value] = subtree_classifier.tree
+            else:
+                print("Le sous-ensemble est vide")
+        
+    def predict(self, data):
+        predictions = []
+        for _, instance in data.iterrows():
+            tree = self.tree
+            while 'class' not in tree:
+                feature_value = instance[tree['feature']]
+                if feature_value not in tree['branches']:
+                    predictions.append(None)
+                    break
+                tree = tree['branches'][feature_value]
+            else:
+                predictions.append(tree['class'])
+        return predictions
 
-    def split(self, X, y):
-        # Division du nœud en sous-nœuds
-        pass
+    def evaluate(self, predicted_labels, true_labels):
+        correct_predictions = sum(pred == true for pred, true in zip(predicted_labels, true_labels))
+        accuracy = correct_predictions / len(true_labels)
+        return accuracy
 
-    def predict(self, sample):
-        # Prédiction pour une seule instance
-        pass
+    def display_tree(self, tree=None, indent=0):
+        if tree is None:
+            tree = self.tree
+        if 'class' in tree:
+            print(f"{'  ' * indent}Class: {tree['class']}")
+        else:
+            print(f"{'  ' * indent}Feature: {tree['feature']}")
+            for value, subtree in tree['branches'].items():
+                print(f"{'  ' * (indent + 1)}Value {tree['feature']} = {value}:")
+                self.display_tree(subtree, indent + 2)

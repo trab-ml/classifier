@@ -5,7 +5,15 @@ import pandas as pd
 import random
 
 def load_data(file_path):
-    # Lit le fichier CSV
+    """
+    Charge et lit proprement le fichier CSV.
+    
+    Args:
+        file_path: chemin vers le fichier à lire
+
+    Returns:
+        la donnée lues
+    """
 
     try:
         df = pd.read_csv(file_path)
@@ -34,7 +42,7 @@ def check_data_validity(df):
         df (object): la donnée à traiter
 
     Returns:
-        void
+        df (object): la donnée traitée
     """
     # print("\ndf.describe() => \n")
     # print(df.describe())
@@ -47,8 +55,7 @@ def check_data_validity(df):
 
     # print("\ndf.head(10) => \n")
     # print(df.head(10))
-
-import random
+    return df
 
 def train_test_split(df, test_size, random_state=None):
     """
@@ -85,45 +92,41 @@ def train_test_split(df, test_size, random_state=None):
     
     return train_df, test_df
 
-
 def main():
-    # 1. Chargement des données
+    # 1. Charger, Lire, Visualiser, Préparer et Répartir les Données
+    
     df = load_data('data/Iris.csv')
 
-    # 2. Vérification des données
-    check_data_validity(df)
+    df = check_data_validity(df)
 
-    # 3. Visualisation des données...
     # visualize_initial_data(df)
     # seaborn_split(df)
 
-    # 5. Préparation et répartition des données en données d'entraînement et données de test
+    # Répartir les données en données d'entraînement et données de test
     train_df, test_df = train_test_split(df, test_size=0.3, random_state=0)
 
-    # Séparation des caractéristiques et des étiquettes pour l'ensemble d'entraînement
+    # Séparer les caractéristiques et les étiquettes
     X_train, Y_train = train_df.drop('species', axis=1), train_df['species']
-
-    # Séparation des caractéristiques et des étiquettes pour l'ensemble de test
     X_test, Y_test = test_df.drop('species', axis=1), test_df['species']
+    
+    # 2. Utiliser TreeClassifier
 
-    # 6. Les données sont elles pures? classify : best split
-    # if data is pure, classify
-    # else if there are potential splits, perform splits
-    # calculate entropy, information gain, and determine the best split
+    # Instancier un objet TreeClassifier
+    classifier = TreeClassifier()
 
-    # 7. Crée une instance de TreeClassifier
-    # tree_classifier = TreeClassifier()
+    # Entraîner le modèle avec les données d'entraînement
+    # classifier.train(X_train, Y_train)
+    classifier.train(train_df, 'species')
 
-    # 8. Entraîne le modèle
-    # tree_classifier.fit(X_train, Y_train)
+    # Prédire les étiquettes pour les données de test
+    predictions = classifier.predict(X_test)
 
-    # 9. Effectue des prédictions sur de nouvelles données
-    # test_data = load_data('data/test_data.csv')
-    # predictions = tree_classifier.predict(test_data)
+    # Évaluer les performances du modèle
+    accuracy = classifier.evaluate(predictions, Y_test)
+    print(f"Précision: {accuracy}")
 
-    # 10. Affiche les prédictions
-    # print(predictions)
-
+    # Afficher l'arbre de décision (optionnel)
+    # classifier.display_tree()
 
 if __name__ == "__main__":
     main()
