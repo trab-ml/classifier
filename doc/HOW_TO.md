@@ -1,6 +1,10 @@
-# Classifieur
+# CLASSIFIEUR
 
-## Ressources
+Un classifieur est...
+
+## COMMENT IMPLÉMENTER UN CLASSIFIEUR EN PYTHON ?
+
+### RESSOURCES
 
 <https://www.youtube.com/watch?v=y6DmpG_PtN0&list=PLPOTBrypY74xS3WD0G_uzqPjCQfU6IRK->
 <https://www.geeksforgeeks.org/decision-tree-implementation-python/?ref=lbp>

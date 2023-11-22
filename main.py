@@ -12,7 +12,7 @@ def load_data(file_path):
         file_path: chemin vers le fichier à lire
 
     Returns:
-        la donnée lues
+        la dataframe contenant la donnée lue
     """
 
     try:
@@ -123,9 +123,9 @@ def main():
 
     # Évaluer les performances du modèle
     accuracy = classifier.evaluate(predictions, Y_test)
-    print(f"Précision: {accuracy}")
+    print(f"Précision: {accuracy * 100}%")
 
-    # Afficher l'arbre de décision (optionnel)
+    # Afficher l'arbre de décision
     # classifier.display_tree()
 
 if __name__ == "__main__":
