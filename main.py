@@ -109,13 +109,11 @@ def main():
     X_train, Y_train = train_df.drop('species', axis=1), train_df['species']
     X_test, Y_test = test_df.drop('species', axis=1), test_df['species']
     
-    # 2. Utiliser TreeClassifier
+    # 2, 3, 4. Entraîner, Prédire et Évaluer le Modèle
 
-    # Instancier un objet TreeClassifier
     classifier = TreeClassifier()
 
     # Entraîner le modèle avec les données d'entraînement
-    # classifier.train(X_train, Y_train)
     classifier.train(train_df, 'species')
 
     # Prédire les étiquettes pour les données de test
@@ -123,10 +121,16 @@ def main():
 
     # Évaluer les performances du modèle
     accuracy = classifier.evaluate(predictions, Y_test)
-    print(f"Précision: {accuracy * 100}%")
+    print(f"Précision: {accuracy * 100}%\n")
 
     # Afficher l'arbre de décision
-    # classifier.display_tree()
+    
+    # Pour un affichage graphique avec graphviz et pydotplus
+    # classifier.display_decision_tree()
+    
+    # Affichage textuel
+    print("----- Arbre de décision -----\n")
+    classifier.display_tree_textual()
 
 if __name__ == "__main__":
     main()

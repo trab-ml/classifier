@@ -34,18 +34,13 @@ def seaborn_split(df):
     Returns:
         None
     """
-    # Supposons que 'species', 'petal_width' et 'petal_length' sont les noms de colonnes dans votre dataframe
+
     plotting_df = pd.DataFrame(df, columns=['species', 'petal_width', 'petal_length'])
 
-    # Créer un scatter plot en utilisant lmplot de seaborn
     sns.lmplot(data=plotting_df, x="petal_width", y="petal_length", hue="species", fit_reg=False)
 
-    # Ajouter une ligne verticale pour représenter la valeur de division (0.8 dans ce cas)
     valeur_division = 0.8
+    
     plt.vlines(x=valeur_division, ymin=1, ymax=7)
-
-    # Définir la limite de l'axe x pour une meilleure visualisation
     plt.xlim(0, 2.6)
-
-    # Afficher le plot
     plt.show()
