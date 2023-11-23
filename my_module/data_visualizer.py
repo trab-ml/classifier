@@ -20,7 +20,7 @@ def visualize_initial_data(df):
     
     plt.xlabel("petal_width")
     plt.ylabel("petal_length")
-    plt.title("Diagramme de dispersion de la largeur du pétale par rapport à la longueur du pétale")
+    plt.title("Dispersion de la largeur du pétale par rapport à la longueur du pétale")
     plt.legend()
     plt.show()
 
