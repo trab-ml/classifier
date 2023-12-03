@@ -3,6 +3,8 @@ from my_module.data_visualizer import seaborn_split, visualize_initial_data
 import numpy as np
 import pandas as pd
 import random
+import time
+import psutil
 
 def load_data(file_path):
     """
@@ -92,6 +94,35 @@ def train_test_split(df, test_size, random_state=None):
     
     return train_df, test_df
 
+import time
+import psutil
+
+def measure_time_and_memory(func):
+    def wrapper(*args, **kwargs):
+        # Mesurer le temps d'exécution
+        start_time = time.time()
+
+        # Mesurer l'utilisation de la mémoire avant l'exécution de la fonction
+        start_memory = psutil.Process().memory_info().rss / 1024 / 1024  # en Mo
+
+        # Exécuter la fonction
+        result = func(*args, **kwargs)
+
+        # Mesurer l'utilisation de la mémoire après l'exécution de la fonction
+        end_memory = psutil.Process().memory_info().rss / 1024 / 1024  # en Mo
+
+        # Mesurer le temps d'exécution
+        end_time = time.time()
+        execution_time = end_time - start_time
+
+        print(f"\nTemps d'exécution : {execution_time} secondes")
+        print(f"Utilisation de la mémoire : {end_memory - start_memory} Mo")
+
+        return result
+
+    return wrapper
+
+@measure_time_and_memory
 def main():
     # 1. Charger, Lire, Visualiser, Préparer et Répartir les Données
     

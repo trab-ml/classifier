@@ -1,25 +1,27 @@
-# APPRENTISSAGE AUTOMATIQUE - CLASSIFIEUR
+# MACHINE LEARNING - CLASSIFIER
 
-Ce projet à pour but d'implémenter un classifieur avec l'algorithme de l'arbre de décision (qui est un algorithme d'apprentissage automatique supervisé).
+This project aims to implement a classifier with the decision tree algorithm (which is a supervised machine learning algorithm).
 
-Le gain d'information a été utilisé comme critère de sélection.
+Information gain was used as a selection criterion.
 
 ## PRINCIPALES ÉTAPES RÉALISÉES
 
-| PRINCIPALES TÂCHES | DESCRIPTION |
+| MAIN TASKS | ABOUT THE TASK |
 |--------------------|-------------|
-| **1. Charger, Lire, <a href="#visualize">Visualiser</a>, Préparer et Répartir les Données** | Faire appel Pandas les fichiers CSV.|
-| **2. Apprentissage** | Utiliser le classifieur d'arbre de décision |
-| **3. Prédiction** | Faire des prédictions sur un jeu de données fourni. |
-| **4. Évaluation** | Évaluer les performances du classifieur avec de la donnée dédiée au test |
+| **1. Load, Read, <a href="#visualize">View</a>, Prepare and Distribute Data** | Use Pandas for CSV files.|
+| **2. Learning** | Use decision tree classifier |
+| **3. Prediction** | Make predictions on given dataset. |
+| **4. Rating** | Rate classifier performance with test data |
 
-**<a id="visualize">Visualiser</a>**
+**<a id="visualize">View</a>**
 
-![Avant classification](doc/figure1.png)
-![Avant classification](doc/figure2.png)
-![Après classification](doc/graphviz_decision_tree.png)
+![Before classification](doc/figure1.png)
+![Before classification](doc/figure2.png)
+![After classification](doc/graphviz_decision_tree.png)
 
-### DÉPENDANCES
+![Measure of memory and time](./doc/measure_memory_and_time_output.png)
+
+### DÉPENDENCES
 
 - [Numpy](https://numpy.org/)
 - [Pandas](https://pandas.pydata.org/)
@@ -27,8 +29,10 @@ Le gain d'information a été utilisé comme critère de sélection.
 - [Seaborn](https://seaborn.pydata.org/)
 - [Graphviz](https://graphviz.org/)
 - [Pydotplus](https://pypi.org/project/pydotplus/)
+- [Time](https://docs.python.org/fr/3/library/time.html)
+- [Psutil](https://pypi.org/project/psutil/)
 
-#### RESSOURCES
+#### RESOURCES
 
 - <https://www.youtube.com/watch?v=y6DmpG_PtN0&list=PLPOTBrypY74xS3WD0G_uzqPjCQfU6IRK->
 - <https://www.geeksforgeeks.org/decision-tree-implementation-python/?ref=lbp>
