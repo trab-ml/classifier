@@ -4,6 +4,14 @@ This project aims to implement a classifier with the decision tree algorithm (wh
 
 Information gain was used as a selection criterion.
 
+To run the program:
+
+```bash
+$ ls
+data  doc  main.py  my_module  README.md
+$ python3 main.py
+```
+
 ## PRINCIPALES ÉTAPES RÉALISÉES
 
 | MAIN TASKS | ABOUT THE TASK |

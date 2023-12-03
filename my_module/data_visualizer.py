@@ -4,18 +4,18 @@ import seaborn as sns
 
 def visualize_initial_data(df):
     """
-    Visualiser les données initiales avec un scatter plot.
+    Visualize the data using a scatter plot.
 
     Args:
-        df (pandas.DataFrame): La dataframe contenant les données.
+        df (pandas.DataFrame): The input dataframe containing the data to visualize.
 
     Returns:
         None
     """
-    # Définir une couleur pour chaque espèce
+    # Deinite a dictionnary to color the scatter plot
     couleurs = {'Iris-setosa': 'red', 'Iris-versicolor': 'green', 'Iris-virginica': 'blue'}
 
-    # Utiliser la colonne 'species' pour colorer le scatter plot
+    # Use the dictionnary to color the scatter plot
     sns.scatterplot(x='petal_width', y='petal_length', hue='species', palette=couleurs, data=df)
     
     plt.xlabel("petal_width")
@@ -26,10 +26,10 @@ def visualize_initial_data(df):
 
 def seaborn_split(df):
     """
-    Visualise les données divisées en utilisant un scatter plot.
+    Visualize the data using a scatter plot and a vertical line to show the split.
 
     Args:
-        df (pandas.DataFrame): La dataframe d'entrée contenant les données divisées.
+        df (pandas.DataFrame): The input dataframe containing the data to visualize.
 
     Returns:
         None

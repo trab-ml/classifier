@@ -8,43 +8,42 @@ import psutil
 
 def load_data(file_path):
     """
-    Charge et lit proprement le fichier CSV.
+    Load properly the CSV file.
     
     Args:
-        file_path: chemin vers le fichier à lire
+        file_path: path to the CSV file
 
     Returns:
-        la dataframe contenant la donnée lue
+        the loaded data
     """
 
     try:
         df = pd.read_csv(file_path)
 
     except FileNotFoundError:
-        print("Fichier non trouvé !.")
+        print("File not found !.")
 
     except pd.errors.EmptyDataError:
-        print("Fichier vide !.")
+        print("Empty file !.")
 
     except pd.errors.ParserError as e:
-        print(f"Erreur lors de la lecture du CSV: {e}")
+        print(f"An Error occured while parsing the file: {e}")
 
     except Exception as e:
-        print(f"Erreur inattendue: {e}")
+        print(f"Unexpected error: {e}")
 
     return df
 
 def check_data_validity(df):
     """
-    Prend l'objet réprésentant la donnée en paramètre, 
-    vérifie qu'il n'y a pas de valeurs nulles et supprime 
-    les colonnes inutiles.
+    Take a dataframe as parameter, check that there are no null values 
+    and remove unnecessary columns.
 
     Args:
-        df (object): la donnée à traiter
+        df (dataframe): the data to check
 
     Returns:
-        df (object): la donnée traitée
+        df (dataframe): a valid dataframe
     """
     # print("\ndf.describe() => \n")
     # print(df.describe())
@@ -52,7 +51,7 @@ def check_data_validity(df):
     # print("\ndf.info() => \n")
     # df.info()
 
-    # supprime la colonne 'Id' qui ne sera pas utile ici
+    # remove unnecessary columns
     df = df.drop('Id', axis=1)
 
     # print("\ndf.head(10) => \n")
@@ -61,24 +60,24 @@ def check_data_validity(df):
 
 def train_test_split(df, test_size, random_state=None):
     """
-    Prend une dataframe en paramètre, le pourcentage (ou le nombre de lignes) 
-    de la dataframe à dédier au test et retourne respectivement la donnée 
-    à entraîner (train_data) et la donnée à tester (test_data).
+    Take a dataframe as parameter, the percentage (or the number of rows)
+    of the dataframe to dedicate to the test and respectively return the data 
+    to train (train_data) and the data to test (test_data).
 
     Args:
-        df (pandas.DataFrame): la dataframe contenant la donnée à séparer
-        test_size (float): le pourcentage (entre 0 et 1) ou le nombre de lignes à dédier au test
-        random_state (int or None): seed pour la reproductibilité
+        df (pandas.DataFrame): the data to split
+        test_size (float): the percentage (or the number of rows) of 
+        the dataframe to dedicate to the test
 
     Returns:
-        train_df, test_df: la donnée à entraîner, la donnée à tester 
+        train_df, test_df: the data to train and the data to test
     """
     
     if not 0 <= test_size <= 1:
-        raise ValueError("La taille du test doit être entre 0 et 1")
+        raise ValueError("The test size must be between 0 and 1")
 
     if test_size > len(df):
-        raise ValueError("La taille du test ne peut pas être supérieure à la taille de la dataframe")
+        raise ValueError("The test size must not be greater than the dataframe length")
 
     if random_state is not None:
         random.seed(random_state)
@@ -99,19 +98,19 @@ import psutil
 
 def measure_time_and_memory(func):
     def wrapper(*args, **kwargs):
-        # Mesurer le temps d'exécution
+        # Measure the execution time
         start_time = time.time()
 
-        # Mesurer l'utilisation de la mémoire avant l'exécution de la fonction
-        start_memory = psutil.Process().memory_info().rss / 1024 / 1024  # en Mo
+        # Measure the memory usage before the function call
+        start_memory = psutil.Process().memory_info().rss / 1024 / 1024  # in Mo
 
-        # Exécuter la fonction
+        # Execute the function to measure
         result = func(*args, **kwargs)
 
-        # Mesurer l'utilisation de la mémoire après l'exécution de la fonction
-        end_memory = psutil.Process().memory_info().rss / 1024 / 1024  # en Mo
+        # Measure the memory usage after the function call
+        end_memory = psutil.Process().memory_info().rss / 1024 / 1024  # in Mo
 
-        # Mesurer le temps d'exécution
+        # Measure the execution time
         end_time = time.time()
         execution_time = end_time - start_time
 
@@ -124,7 +123,7 @@ def measure_time_and_memory(func):
 
 @measure_time_and_memory
 def main():
-    # 1. Charger, Lire, Visualiser, Préparer et Répartir les Données
+    # 1. Load, Read, Visualize, Prepare and Split the Data
     
     df = load_data('data/Iris.csv')
 
@@ -133,35 +132,35 @@ def main():
     # visualize_initial_data(df)
     # seaborn_split(df)
 
-    # Répartir les données en données d'entraînement et données de test
+    # Distribute the data into train and test sets
     train_df, test_df = train_test_split(df, test_size=0.3, random_state=0)
 
-    # Séparer les caractéristiques et les étiquettes
+    # Seperate the features and the labels
     X_train, Y_train = train_df.drop('species', axis=1), train_df['species']
     X_test, Y_test = test_df.drop('species', axis=1), test_df['species']
     
-    # 2, 3, 4. Entraîner, Prédire et Évaluer le Modèle
+    # 2, 3, 4. Train, Predict and Evaluate the Model
 
     classifier = TreeClassifier()
 
-    # Entraîner le modèle avec les données d'entraînement
+    # Train the model with the train data
     classifier.train(train_df, 'species')
 
-    # Prédire les étiquettes pour les données de test
+    # Predict the labels of the test data
     predictions = classifier.predict(X_test)
 
-    # Évaluer les performances du modèle
+    # Evaluate the model
     accuracy = classifier.evaluate(predictions, Y_test)
     print(f"Précision: {accuracy * 100}%\n")
 
-    # Afficher l'arbre de décision
+    # Print of Decsion Tree
     
-    # Pour un affichage graphique avec graphviz et pydotplus
+    # Graphic display with graphviz and pydotplus
     # classifier.display_decision_tree()
     
-    # Affichage textuel
-    print("----- Arbre de décision -----\n")
-    classifier.display_tree_textual()
+    # Textual display
+    # print("----- Arbre de décision -----\n")
+    # classifier.display_tree_textual()
 
 if __name__ == "__main__":
     main()

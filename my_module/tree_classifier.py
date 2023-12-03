@@ -4,13 +4,13 @@ from graphviz import Digraph
 
 def calculate_entropy(labels):
     """
-    Prend un vecteur de labels en paramètre et calcule l'entropie de ce vecteur.
+    Takes a vector of labels as parameter and calculates the entropy.
     
     Args:
-        labels (array): vecteur de labels
+        labels (array): Vector of labels
     
     Returns:
-        entropy (float): l'entropie du vecteur de labels
+        entropy (float): The entropy of the labels
     """
     _, counts = np.unique(labels, return_counts=True)
     probabilities = counts / len(labels)
@@ -20,22 +20,22 @@ def calculate_entropy(labels):
 
 def calculate_information_gain(data, feature_name, target_name):
     """
-    Prend la donnée, le nom de la feature et le nom de la target 
-    en paramètre et calcule le gain d'information.
+    Takes the data, the name of the feature and the name of the target as parameters
+    and calculates the information gain.
     
     Args:
-        data (pandas.DataFrame): la donnée
-        feature_name (str): le nom de la feature
-        target_name (str): le nom de la target
+        data (pandas.DataFrame): the data
+        feature_name (str): the name of the feature
+        target_name (str): the name of the target
     
     Returns:
-        information_gain (float): le gain d'information
+        information_gain (float): the information gain
     """
-    # Calcul de l'entropie initiale
+    # Calculation of the initial entropy
     initial_entropy = calculate_entropy(data[target_name])
     print(f"Initial Entropy: {initial_entropy}")
 
-    # Calcul de l'entropie après split
+    # Calculation of the new entropy
     values = data[feature_name].unique()
     new_entropy = 0
     for value in values:
@@ -45,23 +45,23 @@ def calculate_information_gain(data, feature_name, target_name):
         print(f"Subset Entropy ({feature_name} = {value}): {entropy}")
         new_entropy += weight * entropy
 
-    # Calcul du gain d'information
+    # Calculation of the information gain
     information_gain = initial_entropy - new_entropy
     
     return information_gain
 
 def find_best_split(data, target_name):
     """
-    Prend la donnée et le nom de la target en paramètre et trouve la meilleure feature
-    et le meilleur gain d'information.
+    Takes the data and the name of the target as parameters and returns the best feature
+    and the best information gain.
     
     Args:
-        data (pandas.DataFrame): la donnée
-        target_name (str): le nom de la target
+        data (pandas.DataFrame): the data
+        target_name (str): the name of the target
         
     Returns:
-        best_feature (str): le nom de la meilleure feature
-        best_gain (float): le meilleur gain d'information
+        best_feature (str): the best feature
+        best_gain (float): the best information gain
     """
     features = [col for col in data.columns if col != target_name]
     best_feature = None
@@ -78,7 +78,7 @@ def find_best_split(data, target_name):
 
     return best_feature, best_gain
 
-# Un classifieur d'arbre de décision.
+# A class to represent a decision tree classifier
 class TreeClassifier:
 
     def __init__(self):
@@ -86,11 +86,11 @@ class TreeClassifier:
 
     def train(self, data, target_name):
         """
-        Prend la donnée et le nom de la target en paramètre et construit un arbre de décision.
-        
+        Takes the data and the name of the target as parameters and trains the decision tree.
+            
         Args:
-            data (pandas.DataFrame): la donnée
-            target_name (str): le nom de la target
+            data (pandas.DataFrame): the data
+            target_name (str): the name of the target
         
         Returns:
             None
@@ -102,28 +102,28 @@ class TreeClassifier:
 
         best_feature, _ = find_best_split(data, target_name)
 
-        # Crée un noeud de décision 
+        # Create a node for the best feature
         self.tree = {'feature': best_feature, 'branches': {}}
 
-        # Construction récursive de l'arbre
+        # Recursive construction of the tree
         for value in data[best_feature].unique():
             subset = data[data[best_feature] == value]
-            if not subset.empty:  # Le sous-ensemble est-il vide?
+            if not subset.empty:  # Is the subset empty?
                 subtree_classifier = TreeClassifier()
                 subtree_classifier.train(subset, target_name)
                 self.tree['branches'][value] = subtree_classifier.tree
             else:
-                print("Le sous-ensemble est vide")
+                print("The subset is empty!")
         
     def predict(self, data):
         """
-        Prend la donnée en paramètre et retourne les prédictions.
+        Takes the data as parameter and returns the predictions.
         
         Args:
-            data (pandas.DataFrame): la donnée
+            data (pandas.DataFrame): The data to predict
         
         Returns:
-            predictions (list): les prédictions
+            predictions (list): predictions
         """
         predictions = []
         for _, instance in data.iterrows():
@@ -141,14 +141,14 @@ class TreeClassifier:
 
     def evaluate(self, predicted_labels, true_labels):
         """
-        Prend les prédictions et les vraies valeurs en paramètre et retourne l'accuracy.
+        Takes the predicted labels and the true labels as parameters and returns the accuracy.
         
         Args:
-            predicted_labels (list): les prédictions
-            true_labels (list): les vraies valeurs
+            predicted_labels (list): predicted labels
+            true_labels (list): true labels
         
         Returns:
-            accuracy (float): la précision
+            accuracy (float): prediction accuracy
         """
         correct_predictions = sum(pred == true for pred, true in zip(predicted_labels, true_labels))
         accuracy = correct_predictions / len(true_labels)
@@ -156,28 +156,28 @@ class TreeClassifier:
 
     def display_tree_graphviz(self, tree=None, dot=None):
         """ 
-        Prend un arbre de décision en paramètre et génère une représentation graphique.
+        Takes a decision tree as parameter and returns a Graphviz object to display the tree.
         
         Args:
-            tree (dict): l'arbre de décision
-            dot (graphviz.Digraph): objet Graphviz pour construire le graphe
+            tree (dict): The decision tree
+            dot (graphviz.Digraph): Graphviz object to display the tree
         
         Returns:
-            dot (graphviz.Digraph): l'objet Graphviz mis à jour
+            dot (graphviz.Digraph): An Graphviz object to display the tree
         """
         if tree is None:
             tree = self.tree
             dot = Digraph(comment='Decision Tree')
 
         if 'class' in tree:
-            # Si c'est un nœud feuille (classe), affiche simplement la classe
+            # If it's a leaf node (class), simply display the class
             dot.node(str(tree['class']), shape='ellipse')
         else:
-            # Si c'est un nœud de décision, affiche la feature et ses branches
+            # If it's a decision node, display the feature and the branches
             dot.node(tree['feature'], shape='box')
             for value, subtree in tree['branches'].items():
                 dot = self.display_tree_graphviz(subtree, dot)
-                # Ajoute l'arête seulement si la clé 'feature' est présente dans le sous-arbre
+                # Add an edge between the decision node and the subtree
                 if 'feature' in subtree:
                     dot.edge(tree['feature'], subtree['feature'], label=str(value))
 
@@ -185,18 +185,18 @@ class TreeClassifier:
 
     def display_decision_tree(self):
         """
-        Affiche visuellement l'arbre de décision à l'aide de Graphviz.
+        Displays the decision tree.
         """
         dot = self.display_tree_graphviz()
         dot.render('decision_tree', format='png', cleanup=True, view=True)
         
     def display_tree_textual(self, tree=None, indent=0):
         """ 
-        Prend un arbre de décision en paramètre et affiche l'arbre de manière textuelle.
+        Takes a decision tree as parameter and returns a textual representation of the tree.
         
         Args:
-            tree (dict): l'arbre de décision
-            indent (int): l'indentation
+            tree (dict): decision tree
+            indent (int): indentation level
         
         Returns:
             None
